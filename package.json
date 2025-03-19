@@ -1,0 +1,37 @@
+{
+  "name": "todo-list-api",
+  "version": "0.0.0-dev",
+  "description": "Simple Todo List API with authentication in express.js.",
+  "main": "dist/server.js",
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "tsc -p ./tsconfig.build.json",
+    "start": "node dist/server",
+    "dev": "cross-env DEBUG=api:* ts-node-dev src/server.ts"
+  },
+  "keywords": [
+    "todo-list",
+    "todos",
+    "authentication",
+    "express",
+    "nodejs"
+  ],
+  "author": "Shubham Vishwakarma",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/debug": "^4.1.12",
+    "@types/express": "^5.0.0",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^22.13.10",
+    "cross-env": "^7.0.3",
+    "rimraf": "^6.0.1",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "debug": "^4.4.0",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "morgan": "^1.10.0"
+  }
+}
