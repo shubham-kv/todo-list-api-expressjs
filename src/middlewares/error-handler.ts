@@ -1,0 +1,11 @@
+import { ErrorRequestHandler } from "express";
+import httpErrors from "http-errors";
+
+export const errorHandler: ErrorRequestHandler = (err, _, res, next) => {
+  const isHttpError = httpErrors.isHttpError(err);
+  const statusCode = isHttpError ? err.statusCode : 500;
+  const error = isHttpError ? err.message : "Something went wrong!";
+
+  res.status(statusCode).json({ error });
+  next();
+};

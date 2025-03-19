@@ -2,7 +2,7 @@
 
 import "dotenv/config";
 import http from "http";
-import { app } from "./app";
+import app from "./app";
 import { debugApiServer } from "./constants";
 
 function normalizePort(val: string) {
