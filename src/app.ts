@@ -1,9 +1,12 @@
 import express from "express";
 import morgan from "morgan";
 import { notFoundHandler, errorHandler } from "./middlewares";
+import { registerRouter } from "./routes";
 import { debugHttp } from "./constants";
 
 const app = express();
+const apiV1Prefix = "/api/v1";
+
 const morganStream: morgan.StreamOptions = {
   write(str) {
     debugHttp(str.trim());
@@ -18,6 +21,8 @@ app.use(express.json());
 app.get("/", (_req, res) => {
   res.json({ message: "Hello World" });
 });
+
+app.use(`${apiV1Prefix}/register`, registerRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

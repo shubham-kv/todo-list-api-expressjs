@@ -13,6 +13,7 @@
     "docker:stop": "docker compose down",
     "docker:dev:build": "docker compose -f compose.dev.yml build",
     "docker:dev:start": "docker compose -f compose.dev.yml up -d",
+    "docker:dev:restart": "docker compose -f compose.dev.yml restart",
     "docker:dev:stop": "docker compose -f compose.dev.yml down"
   },
   "keywords": [
@@ -35,11 +36,13 @@
     "typescript": "^5.8.2"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.2",
     "debug": "^4.4.0",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "http-errors": "^2.0.0",
     "mongoose": "^8.12.1",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "zod": "^3.24.2"
   }
 }
