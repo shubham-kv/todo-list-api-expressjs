@@ -7,7 +7,13 @@
     "prebuild": "rimraf dist",
     "build": "tsc -p ./tsconfig.build.json",
     "start": "node dist/server",
-    "dev": "cross-env DEBUG=api:* ts-node-dev src/server.ts"
+    "dev": "cross-env DEBUG=api:* ts-node-dev src/server.ts",
+    "docker:build": "docker compose build",
+    "docker:start": "docker compose up -d",
+    "docker:stop": "docker compose down",
+    "docker:dev:build": "docker compose -f compose.dev.yml build",
+    "docker:dev:start": "docker compose -f compose.dev.yml up -d",
+    "docker:dev:stop": "docker compose -f compose.dev.yml down"
   },
   "keywords": [
     "todo-list",
