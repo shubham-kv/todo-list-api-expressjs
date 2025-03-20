@@ -3,6 +3,7 @@
 import "dotenv/config";
 import http from "http";
 import app from "./app";
+import { initiateDbConnection } from "./utils/db";
 import { debugApiServer } from "./constants";
 
 function normalizePort(val: string) {
@@ -26,7 +27,9 @@ interface SysError extends Error {
   code: string;
 }
 
-(function main() {
+(async function main() {
+  await initiateDbConnection();
+
   const port = normalizePort(process.env.PORT || "3000");
   app.set("port", port);
 

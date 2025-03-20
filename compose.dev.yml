@@ -11,6 +11,7 @@ services:
     environment:
       PORT: 4000
       NODE_ENV: development
+      MONGO_URI: ${DEV_MONGO_URI}
     volumes:
       - ./src:/usr/src/app/src
     depends_on:
