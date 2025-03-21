@@ -1,10 +1,11 @@
 import express from "express";
 import morgan from "morgan";
 import { notFoundHandler, errorHandler } from "./middlewares";
-import { routesConfig } from "./config";
+import { registerRouter } from "./routes";
 import { debugHttp } from "./constants";
 
 const app = express();
+const apiV1Prefix = "/api/v1";
 
 const morganStream: morgan.StreamOptions = {
   write(str) {
@@ -21,9 +22,7 @@ app.get("/", (_req, res) => {
   res.json({ message: "Hello World" });
 });
 
-routesConfig.map((config) => {
-  app.use(config.path, ...config.handlers);
-});
+app.use(`${apiV1Prefix}/register`, registerRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
