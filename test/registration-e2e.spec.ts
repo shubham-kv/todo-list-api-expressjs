@@ -5,15 +5,12 @@ import { faker } from "@faker-js/faker";
 import { setupDatabase } from "./setup";
 
 import app from "../src/app";
-import { routesConfig } from "../src/config";
-import { registerUserSymbol } from "../src/constants";
-import { RegisterUserData } from "../src/types/api/users";
 import { User } from "../src/models/user";
+import { apiV1Prefix } from "../src/constants";
+import { RegisterUserData } from "../src/types/api/users";
 
 const request = supertest(app);
-const registerUserApiPath = routesConfig.find(
-  (c) => c.key === registerUserSymbol
-)!.path;
+const registerUserApiPath = `${apiV1Prefix}/register`;
 
 const registerUserStub = (): RegisterUserData => ({
   name: faker.person.fullName(),
@@ -50,7 +47,7 @@ describe("Registration e2e", () => {
           name: requestBody.name,
           email: requestBody.email,
           createdAt: expect.anything(),
-          updatedAt: expect.anything()
+          updatedAt: expect.anything(),
         },
       });
     });
