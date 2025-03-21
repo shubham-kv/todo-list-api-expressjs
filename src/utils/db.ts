@@ -1,7 +1,10 @@
 import mongoose from "mongoose";
 
 export async function initiateDbConnection(): Promise<void> {
-  const mongoUri = process.env.MONGO_URI as string;
+  const mongoUri =
+    process.env.NODE_ENV === "test"
+      ? (process.env.TEST_MONGO_URI as string)
+      : (process.env.MONGO_URI as string);
 
   try {
     await mongoose.connect(mongoUri);
