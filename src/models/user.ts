@@ -1,7 +1,8 @@
 import bcrypt from "bcryptjs";
 import { Schema, model } from "mongoose";
+import { TUser } from "../types/api/users";
 
-const userSchema = new Schema(
+const userSchema = new Schema<TUser>(
   {
     name: {
       type: String,
@@ -17,9 +18,7 @@ const userSchema = new Schema(
       required: true,
     },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true, }
 );
 
 userSchema.pre("save", async function preSave(next) {
@@ -33,4 +32,4 @@ userSchema.pre("save", async function preSave(next) {
   this.password = hashedPassword;
 });
 
-export const User = model("User", userSchema);
+export const User = model<TUser>("User", userSchema);

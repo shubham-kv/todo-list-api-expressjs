@@ -1,11 +1,10 @@
-import { Auth } from "./auth";
-import { Entity } from "./entity";
+import { Entity } from "./misc";
 
-export type User = {
+export type TUser = {
   name: string;
   email: string;
   password: string;
 } & Entity;
 
-export type RegisterUserData = Pick<User, "name" | "email" | "password">;
-export type RegisterUserResponse = Omit<User, 'password'>;
+export type RegisterUserData = Pick<TUser, "name" | "email" | "password">;
+export type RegisterUserResponse = Omit<TUser, 'password'>;

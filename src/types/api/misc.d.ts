@@ -3,3 +3,7 @@ export type Entity = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+export type SuccessResponse = {
+  message: string;
+};
