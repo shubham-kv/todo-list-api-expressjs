@@ -12,6 +12,8 @@ services:
       PORT: 4000
       NODE_ENV: development
       MONGO_URI: ${DEV_MONGO_URI}
+      LOGIN_TOKEN_SECRET: ${DEV_LOGIN_TOKEN_SECRET}
+      LOGIN_TOKEN_EXPIRY: ${DEV_LOGIN_TOKEN_EXPIRY}
     volumes:
       - ./src:/usr/src/app/src
     depends_on:

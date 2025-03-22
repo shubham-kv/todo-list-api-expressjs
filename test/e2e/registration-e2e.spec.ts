@@ -1,22 +1,15 @@
 import supertest from "supertest";
 import { beforeAll, describe, expect, test } from "vitest";
-import { faker } from "@faker-js/faker";
 
-import { setupDatabase } from "./setup";
+import app from "../../src/app";
+import { User } from "../../src/models/user";
+import { RegisterUserData } from "../../src/types/api/users";
 
-import app from "../src/app";
-import { User } from "../src/models/user";
-import { apiV1Prefix } from "../src/constants";
-import { RegisterUserData } from "../src/types/api/users";
+import { setupDatabase } from "../setup";
+import { registerUserApiPath } from "../constants";
+import { registerUserStub } from "../stubs";
 
 const request = supertest(app);
-const registerUserApiPath = `${apiV1Prefix}/register`;
-
-const registerUserStub = (): RegisterUserData => ({
-  name: faker.person.fullName(),
-  email: faker.internet.email(),
-  password: faker.internet.password({ length: 8 }),
-});
 
 describe("Registration e2e", () => {
   setupDatabase();

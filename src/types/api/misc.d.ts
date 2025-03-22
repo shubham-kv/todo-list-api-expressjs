@@ -4,6 +4,6 @@ export type Entity = {
   updatedAt: Date;
 };
 
-export type SuccessResponse = {
+export type SuccessResponse<T> = {
   message: string;
-};
+} & T;
