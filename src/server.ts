@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 import "dotenv/config";
 import http from "http";
 import app from "./app";

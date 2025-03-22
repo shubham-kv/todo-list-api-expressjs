@@ -6,6 +6,7 @@ Simple Todo List API with jwt authentication in express.js.
 ## List of APIs
 
 - [Register User API](#1-register-user-api)
+- [Login API](#2-login-api)
 
 ## Detailed API Specification
 
@@ -13,7 +14,7 @@ Simple Todo List API with jwt authentication in express.js.
 
 API to allow new users to register to the application.
 
-#### API Specification
+**API Specification:**
 
 |   |   |
 | - | - |
@@ -23,7 +24,7 @@ API to allow new users to register to the application.
 | Response Content type | `json`              |
 | Response Status Code  | `201`               |
 
-#### Sample Request
+**Sample Request:**
 
 ```http
 POST /api/v1/register HTTP/1.1
@@ -37,7 +38,7 @@ Content-Type: application/json
 }
 ```
 
-#### Sample Success Response
+**Sample Success Response:**
 
 ```json
 {
@@ -49,6 +50,42 @@ Content-Type: application/json
     "createdAt": "2025-03-20T09:45:56.097Z",
     "updatedAt": "2025-03-20T09:45:56.097Z"
   }
+}
+```
+
+### 2. Login API
+
+API to allow users to login to the application, utilizes jwt token.
+
+**API Specification:**
+
+|   |   |
+| - | - |
+| API Version           | `v1`                |
+| Request Method        | `POST`              |
+| Request Path          | `/api/v1/auth/login`|
+| Response Content type | `json`              |
+| Response Status Code  | `200`               |
+
+**Sample Request:**
+
+```http
+POST /api/v1/auth/login HTTP/1.1
+Host: localhost:4000
+Content-Type: application/json
+
+{
+  "email": "john.doe@example.com",
+  "password": "John#123"
+}
+```
+
+**Sample Success Response:**
+
+```json
+{
+  "message": "Login Successful",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 ```
 

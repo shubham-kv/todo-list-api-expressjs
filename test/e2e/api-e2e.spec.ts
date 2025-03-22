@@ -1,14 +1,11 @@
 import supertest from "supertest";
 import { beforeEach, describe, expect, test } from "vitest";
 
-import app from "../src/app";
-import { setupDatabase } from "./setup";
+import app from "../../src/app";
 
 const request = supertest(app);
 
 describe("API e2e", () => {
-  setupDatabase();
-
   describe("GET /", () => {
     describe("when 'GET /' request is made", () => {
       let response: supertest.Response;

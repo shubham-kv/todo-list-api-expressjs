@@ -11,6 +11,8 @@ services:
     environment:
       PORT: ${PORT}
       TEST_MONGO_URI: ${TEST_MONGO_URI}
+      LOGIN_TOKEN_SECRET: ${TEST_LOGIN_TOKEN_SECRET}
+      LOGIN_TOKEN_EXPIRY: ${TEST_LOGIN_TOKEN_EXPIRY}
     volumes:
       - ./src:/usr/src/app/src
       - ./test:/usr/src/app/test
