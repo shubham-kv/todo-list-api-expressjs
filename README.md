@@ -33,7 +33,7 @@ Content-Type: application/json
 
 {
   "name": "John Doe",
-  "email": "john.doe2@example.com",
+  "email": "john.doe@example.com",
   "password": "John#123"
 }
 ```
@@ -55,7 +55,8 @@ Content-Type: application/json
 
 ### 2. Login API
 
-API to allow users to login to the application, utilizes jwt token.
+API to allow users to login to the application by using json web token (JWT) for
+authorization.
 
 **API Specification:**
 
