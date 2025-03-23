@@ -8,7 +8,7 @@ Simple Todo List API with jwt authentication in express.js.
 - [Register User API](#1-register-user-api)
 - [Login API](#2-login-api)
 
-## Detailed API Specification
+## Specification
 
 ### 1. Register User API
 
@@ -87,6 +87,51 @@ Content-Type: application/json
 {
   "message": "Login Successful",
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+### 3. Create Todo API
+
+API to create & add todos for a user, requires authentication with the `Bearer
+{token}` authentication scheme.
+
+**API Specification:**
+
+|   |   |
+| - | - |
+| API Version           | `v1`            |
+| Request Method        | `POST`          |
+| Request Path          | `/api/v1/todos` |
+| Response Content type | `json`          |
+| Response Status Code  | `201`           |
+
+**Sample Request:**
+
+```http
+POST /api/v1/todos HTTP/1.1
+Host: localhost:4000
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2N2RkMjQwMzQyZTZkNzE4YzU1MjFjM2QiLCJpYXQiOjE3NDI2NDI0NjcsImV4cCI6MTc0MjcyODg2N30.K8YdfzJT4rClGGpb7bKvJsrqlSmEl30b1nQCFYnKBe8
+
+{
+  "title": "Write Docs",
+  "description": "Write detailed, clear & concise documentation for Todos API"
+}
+```
+
+**Sample Success Response:**
+
+```json
+{
+  "message": "Success",
+  "todo": {
+    "id": "67dbe3d4cf8018a34d0ab44d",
+    "title": "Write Docs",
+    "description": "Write detailed, clear & concise doc...",
+    "isDone": false,
+    "createdAt": "2025-03-23T07:41:04.958Z",
+    "updatedAt": "2025-03-23T07:41:04.958Z"
+  }
 }
 ```
 
