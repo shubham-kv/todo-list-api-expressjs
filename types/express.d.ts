@@ -1,4 +1,3 @@
-import { Request } from "express";
 import { TUser } from "../src/types/api/users";
 
 declare module "express-serve-static-core" {

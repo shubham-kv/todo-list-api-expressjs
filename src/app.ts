@@ -2,7 +2,7 @@ import "dotenv/config";
 import express from "express";
 import morgan from "morgan";
 import { notFoundHandler, errorHandler } from "./middlewares";
-import { authRouter, registerRouter } from "./routes";
+import { authRouter, registerRouter, todosRouter } from "./routes";
 import { apiV1Prefix, debugHttp } from "./constants";
 
 const app = express();
@@ -24,6 +24,7 @@ app.get("/", (_req, res) => {
 
 app.use(`${apiV1Prefix}/register`, registerRouter);
 app.use(`${apiV1Prefix}/auth`, authRouter);
+app.use(`${apiV1Prefix}/todos`, todosRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
