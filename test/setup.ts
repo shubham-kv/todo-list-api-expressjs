@@ -14,7 +14,6 @@ async function clearDatabase() {
 export function setupDatabase() {
   beforeAll(async () => {
     await initiateDbConnection();
-    await clearDatabase();
   });
 
   afterAll(async () => {
