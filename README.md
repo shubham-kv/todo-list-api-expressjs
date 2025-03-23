@@ -7,6 +7,7 @@ Simple Todo List API with jwt authentication in express.js.
 
 - [Register User API](#1-register-user-api)
 - [Login API](#2-login-api)
+- [Create Todo API](#3-create-todo-api)
 
 ## Specification
 
