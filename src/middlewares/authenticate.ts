@@ -5,6 +5,13 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { User } from "../models";
 import { loginTokenConfig } from "../config/login-token";
 
+/**
+ * Middleware that authenticates the request based on the jwt passed in
+ * request's `authorization` header using `Bearer token` authentication scheme.
+ * Set's the `request.user` property to the authenticated user. Responds with
+ * `401 Unauthorized` status code for requests with invalid `authorization`
+ * header.
+ */
 export const authenticate: RequestHandler = async (req, _, next) => {
   try {
     const authHeader = req.headers.authorization;
