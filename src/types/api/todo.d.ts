@@ -12,3 +12,11 @@ export type CreateTodoInput = Pick<TodoType, "title" | "description">;
 export type CreateTodoResponse = SuccessResponse<{
   todo: Omit<TodoType, "user">;
 }>;
+
+export type UpdateTodoInput = Partial<Pick<
+  TodoType,
+  "title" | "description" | "isDone"
+>>;
+export type UpdateTodoResponse = SuccessResponse<{
+  todo: Omit<TodoType, "user">;
+}>;
