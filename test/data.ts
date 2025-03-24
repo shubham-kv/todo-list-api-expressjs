@@ -1,5 +1,19 @@
 import { LoginData } from "../src/types/api/auth";
 import { CreateTodoInput } from "../src/types/api/todo";
+import { RegisterUserData } from "../src/types/api/users";
+
+export const registerUserInputs: RegisterUserData[] = [
+  {
+    name: "John Doe",
+    email: "john.doe@example.com",
+    password: "John@123",
+  },
+  {
+    name: "Test",
+    email: "test@example.com",
+    password: "Test@123",
+  },
+];
 
 export const invalidLoginData: LoginData[] = [
   { email: "12345##", password: "" },

@@ -4,11 +4,15 @@ import { afterAll, beforeAll } from "vitest";
 import { registerUser } from "../src/services/user";
 import { createTodo } from "../src/services/todos";
 import { initiateDbConnection, terminateDbConnection } from "../src/utils/db";
+
 import { createTodoInputStub, registerUserStub } from "./stubs";
+import { registerUserInputs } from "./data";
 
 async function seedDatabase() {
-  const testUser = await registerUser(registerUserStub());
-  await createTodo(testUser.id, createTodoInputStub());
+  for (let i = 0; i < registerUserInputs.length; i++) {
+    const user = await registerUser(registerUserStub(i));
+    await createTodo(user.id, createTodoInputStub());
+  }
 }
 
 async function clearDatabase() {
