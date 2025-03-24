@@ -3,7 +3,7 @@ import { registerUserInputs } from "./data";
 
 import { RegisterUserData } from "../src/types/api/users";
 import { LoginData } from "../src/types/api/auth";
-import { CreateTodoInput } from "../src/types/api/todo";
+import { CreateTodoInput, UpdateTodoInput } from "../src/types/api/todo";
 
 export const registerUserStub = (index = 0): RegisterUserData => {
   const minIndex = 0;
@@ -37,4 +37,10 @@ export const loginStub = (index = 0): LoginData => {
 export const createTodoInputStub = (): CreateTodoInput => ({
   title: "Write tests",
   description: "Write e2e tests for all APIs",
+});
+
+export const updateTodoInputStub = (): UpdateTodoInput => ({
+  title: "Write tests",
+  description: "Write e2e tests for newly added APIs",
+  isDone: true,
 });

@@ -1,5 +1,5 @@
 import { LoginData } from "../src/types/api/auth";
-import { CreateTodoInput } from "../src/types/api/todo";
+import { CreateTodoInput, UpdateTodoInput } from "../src/types/api/todo";
 import { RegisterUserData } from "../src/types/api/users";
 
 export const registerUserInputs: RegisterUserData[] = [
@@ -24,6 +24,12 @@ export const invalidLoginData: LoginData[] = [
   { email: "john@example.com", password: "1234567890123456" },
 ];
 
+export const invalidAuthHeaders = [
+  { authorization: "" },
+  { authorization: "Bearer " },
+  { authorization: "Bearer INVALID_TOKEN" },
+];
+
 export const invalidCreateTodoInputs: CreateTodoInput[] = [
   { title: "", description: "" },
   { title: "test", description: "" },
@@ -38,8 +44,26 @@ export const invalidCreateTodoInputs: CreateTodoInput[] = [
   },
 ];
 
-export const invalidAuthHeaders = [
-  { authorization: "" },
-  { authorization: "Bearer " },
-  { authorization: "Bearer INVALID_TOKEN" },
+type InvalidUpdateTodoData = {
+  pathParams?: { id: string };
+  updateInput?: UpdateTodoInput;
+};
+
+export const invalidUpdateTodoData: InvalidUpdateTodoData[] = [
+  { pathParams: { id: "12345" } },
+  { pathParams: { id: "15fdgfqyuq" } },
+  { updateInput: { title: "" } },
+  {
+    updateInput: {
+      title:
+        "A very long title with more than sixty four characters...........",
+    },
+  },
+  { updateInput: { description: "" } },
+  {
+    updateInput: {
+      description:
+        "A very very long description with more than 512 characters ......................................................................................................................................................................................................................................................................................................................................................................................................................................................................",
+    },
+  },
 ];
