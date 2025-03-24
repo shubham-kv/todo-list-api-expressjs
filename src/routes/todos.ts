@@ -2,10 +2,11 @@ import { Router } from "express";
 import { z } from "zod";
 
 import { authenticate } from "../middlewares";
-import { validateSchema } from "../utils/validate-schema";
-import { CreateTodoInput } from "../types/api/todo";
 import { createTodo } from "../services/todos";
+
+import { validateSchema } from "../utils/validate-schema";
 import { debugApiServer } from "../constants";
+import { CreateTodoInput } from "../types/api/todo";
 
 const createTodoSchema = z
   .object({
@@ -32,7 +33,7 @@ todosRouter.post(
     const user = req.user!;
 
     try {
-      const response = await createTodo(input, user);
+      const response = await createTodo(user.id, input);
       debugApiServer(`Created todo: ${JSON.stringify(response.todo, null, 2)}`);
 
       res.status(201).json(response);
