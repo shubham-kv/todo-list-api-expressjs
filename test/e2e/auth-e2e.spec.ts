@@ -6,8 +6,9 @@ import app from "../../src/app";
 import { LoginData } from "../../src/types/api/auth";
 
 import { setupDatabase } from "../setup";
-import { loginApiPath, registerUserApiPath } from "../constants";
 import { loginStub, registerUserStub } from "../stubs";
+import { invalidLoginData } from "../data";
+import { loginApiPath, registerUserApiPath } from "../constants";
 
 const request = supertest(app);
 
@@ -16,15 +17,6 @@ describe("Authentication e2e", () => {
 
   describe(`Login API ${loginApiPath}`, () => {
     describe("given no user registration & invalid input", () => {
-      const invalidLoginData: LoginData[] = [
-        { email: "12345##", password: "" },
-        { email: "john", password: "" },
-        { email: "john@example", password: "" },
-        { email: "john@example.", password: "" },
-        { email: "john@example.com", password: "" },
-        { email: "john@example.com", password: "1234567890123456" },
-      ];
-
       describe.each(invalidLoginData)(
         `when 'POST ${loginApiPath}' request is made with email=$email, password=$password`,
         (invalidLoginData) => {

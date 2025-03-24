@@ -14,6 +14,6 @@ export const loginStub = (): LoginData => ({
 });
 
 export const createTodoInputStub = (): CreateTodoInput => ({
-  title: 'Write tests',
-  description: 'Write e2e tests for all APIs'
-})
+  title: "Write tests",
+  description: "Write e2e tests for all APIs",
+});

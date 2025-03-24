@@ -3,69 +3,37 @@ import supertest, { Response } from "supertest";
 import assert from "assert";
 
 import app from "../../src/app";
-import { Todo } from "../../src/models";
+import { Todo, User } from "../../src/models";
 import { LoginResponse } from "../../src/types/api/auth";
 import { CreateTodoInput, CreateTodoResponse } from "../../src/types/api/todo";
 import { TUser } from "../../src/types/api/users";
 
 import { setupDatabase } from "../setup";
 import { createTodoInputStub, loginStub, registerUserStub } from "../stubs";
-import {
-  createTodoApiPath,
-  loginApiPath,
-  registerUserApiPath,
-} from "../constants";
+import { invalidAuthHeaders, invalidCreateTodoInputs } from "../data";
+import { createTodoApiPath, loginApiPath } from "../constants";
 
 const request = supertest(app);
 
-describe("Todo APIs", () => {
-  setupDatabase();
+describe("Todo APIs e2e", () => {
+  let user: TUser;
+  let jwt: string;
+
+  setupDatabase(true);
+
+  beforeAll(async () => {
+    const email = registerUserStub().email;
+    const registeredUser = await User.findOne({ email }).exec();
+    assert(registeredUser !== null, "No registered user found");
+    user = registeredUser;
+
+    const response = await request.post(loginApiPath).send(loginStub());
+    assert(response.statusCode === 200, "Failed to login test user");
+    jwt = (response.body as LoginResponse).token;
+  });
 
   describe(`Create Todo 'POST ${createTodoApiPath}'`, () => {
     describe("given user has registered & authorized", () => {
-      let user: Omit<TUser, "password">;
-      let jwt: string;
-
-      beforeAll(async () => {
-        const registerResponse = await request
-          .post(registerUserApiPath)
-          .send(registerUserStub());
-
-        user = registerResponse.body.user;
-
-        assert(
-          registerResponse.statusCode >= 200 &&
-            registerResponse.statusCode <= 299,
-          "Failed to register the test user."
-        );
-
-        const loginResponse = await request
-          .post(loginApiPath)
-          .send(loginStub());
-
-        assert(
-          loginResponse.statusCode === 200,
-          "Failed to authenticate the test user."
-        );
-
-        jwt = (loginResponse.body as LoginResponse).token;
-      });
-
-      const invalidCreateTodoInputs: CreateTodoInput[] = [
-        { title: "", description: "" },
-        { title: "test", description: "" },
-        {
-          title:
-            "A very long title with more than sixty four characters...........",
-          description: "",
-        },
-        {
-          title: "test",
-          description:
-            "A very very long description with more than 512 characters ......................................................................................................................................................................................................................................................................................................................................................................................................................................................................",
-        },
-      ];
-
       describe.each(invalidCreateTodoInputs)(
         `when 'POST ${createTodoApiPath}' request is made with invalid inputs`,
         (input) => {
@@ -117,7 +85,7 @@ describe("Todo APIs", () => {
           const createdTodo = await Todo.findById(createdTodoId)
             .populate("user", "name")
             .exec();
-          expect(createdTodo!.user.id).toBe(user.id);
+          expect((createdTodo!.user as TUser).id).toBe(user.id);
         });
 
         test("should return success response", () => {
@@ -134,12 +102,6 @@ describe("Todo APIs", () => {
     });
 
     describe("given invalid or no user authentication", () => {
-      const invalidAuthHeaders = [
-        { authorization: "" },
-        { authorization: "Bearer " },
-        { authorization: "Bearer INVALID_TOKEN" },
-      ];
-
       describe.each(invalidAuthHeaders)(
         `when 'POST ${createTodoApiPath}' request is made with Authorization header set to $authorization`,
         ({ authorization: authHeader }) => {
