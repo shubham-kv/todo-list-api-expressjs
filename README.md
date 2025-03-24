@@ -8,6 +8,7 @@ Simple Todo List API with jwt authentication in express.js.
 - [Register User API](#1-register-user-api)
 - [Login API](#2-login-api)
 - [Create Todo API](#3-create-todo-api)
+- [Update Todo API](#4-update-todo-api)
 
 ## Specification
 
@@ -132,6 +133,52 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2N2RkMjQwM
     "isDone": false,
     "createdAt": "2025-03-23T07:41:04.958Z",
     "updatedAt": "2025-03-23T07:41:04.958Z"
+  }
+}
+```
+
+### 4. Update Todo API
+
+API to update existing todos of a user, requires authentication with the `Bearer
+{token}` authentication scheme.
+
+**API Specification:**
+
+|   |   |
+| - | - |
+| API Version           | `v1`                |
+| Request Method        | `PUT`               |
+| Request Path          | `/api/v1/todos/:id` |
+| Response Content type | `json`              |
+| Response Status Code  | `200`               |
+
+**Sample Request:**
+
+```http
+PUT /api/v1/todos/67dfd5b2df9ea55a38deae9c HTTP/1.1
+Host: localhost:4000
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2N2RkMjQwMzQyZTZkNzE4YzU1MjFjM2QiLCJpYXQiOjE3NDI3OTQ2MjIsImV4cCI6MTc0Mjg4MTAyMn0.Tn46fTdN4ykX_s-C7ZKdqc1vKZcIUqedfa0D4Dp5HFk
+
+{
+  "title": "Write Update Todo API docs",
+  "description": "Write documentation for Update Todos API",
+  "isDone": true
+}
+```
+
+**Sample Success Response:**
+
+```json
+{
+  "message": "Updated Successfully",
+  "todo": {
+    "id": "67dfd5b2df9ea55a38deae9c",
+    "title": "Write Update Todo API docs",
+    "description": "Write documentation for Update Todos API",
+    "isDone": true,
+    "createdAt": "2025-03-23T09:34:42.611Z",
+    "updatedAt": "2025-03-23T10:08:35.979Z"
   }
 }
 ```
