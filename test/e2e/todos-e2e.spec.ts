@@ -18,6 +18,7 @@ const request = supertest(app);
 describe("Todo APIs e2e", () => {
   let user: TUser;
   let jwt: string;
+  const createTodoRequestLine = `POST ${createTodoApiPath}`;
 
   setupDatabase(true);
 
@@ -32,101 +33,97 @@ describe("Todo APIs e2e", () => {
     jwt = (response.body as LoginResponse).token;
   });
 
-  describe(`Create Todo 'POST ${createTodoApiPath}'`, () => {
-    describe("given user has registered & authorized", () => {
-      describe.each(invalidCreateTodoInputs)(
-        `when 'POST ${createTodoApiPath}' request is made with invalid inputs`,
-        (input) => {
-          let response: Response;
-
-          beforeAll(async () => {
-            response = await request
-              .post(createTodoApiPath)
-              .set("Authorization", `Bearer ${jwt}`)
-              .send(input);
-          });
-
-          test("should respond with Bad Request status code", () => {
-            expect(response.statusCode).toBe(400);
-          });
-
-          test("should return error response", () => {
-            expect(response.body).toMatchObject({
-              error: {
-                message: expect.any(String),
-              },
-            });
-          });
-        }
-      );
-
-      describe(`when 'POST ${createTodoApiPath}' request is made with valid input`, () => {
-        let input: CreateTodoInput;
+  describe(`Create Todo API '${createTodoRequestLine}'`, () => {
+    describe.each(invalidAuthHeaders)(
+      `when requested with invalid Authorization header set to $authorization`,
+      ({ authorization: authHeader }) => {
         let response: Response;
-        let responseData: CreateTodoResponse;
 
         beforeAll(async () => {
-          input = createTodoInputStub();
+          response = await request
+            .post(createTodoApiPath)
+            .send(createTodoInputStub())
+            .set("Authorization", authHeader);
+        });
 
+        test("should respond with '401 Unauthorized'", () => {
+          expect(response.statusCode).toBe(401);
+        });
+
+        test("should return error response", () => {
+          expect(response.body).toMatchObject({
+            error: {
+              message: expect.any(String),
+            },
+          });
+        });
+      }
+    );
+
+    describe.each(invalidCreateTodoInputs)(
+      `when requested with invalid inputs`,
+      (input) => {
+        let response: Response;
+
+        beforeAll(async () => {
           response = await request
             .post(createTodoApiPath)
             .set("Authorization", `Bearer ${jwt}`)
             .send(input);
-
-          responseData = response.body;
         });
 
-        test("should respond with Created status code", () => {
-          expect(response.statusCode).toBe(201);
+        test("should respond with '400 Bad Request'", () => {
+          expect(response.statusCode).toBe(400);
         });
 
-        test("should create todo for the authorized user", async () => {
-          const createdTodoId = responseData.todo.id;
-          const createdTodo = await Todo.findById(createdTodoId)
-            .populate("user", "name")
-            .exec();
-          expect((createdTodo!.user as TUser).id).toBe(user.id);
-        });
-
-        test("should return success response", () => {
-          expect(responseData).toMatchObject({
-            message: expect.stringMatching(/success/i),
-            todo: {
-              id: expect.any(String),
-              isDone: false,
-              ...input,
+        test("should return error response", () => {
+          expect(response.body).toMatchObject({
+            error: {
+              message: expect.any(String),
             },
           });
         });
+      }
+    );
+
+    describe(`when requested with valid input`, () => {
+      let input: CreateTodoInput;
+      let response: Response;
+      let responseData: CreateTodoResponse;
+
+      beforeAll(async () => {
+        input = createTodoInputStub();
+
+        response = await request
+          .post(createTodoApiPath)
+          .set("Authorization", `Bearer ${jwt}`)
+          .send(input);
+
+        responseData = response.body;
       });
-    });
 
-    describe("given invalid or no user authentication", () => {
-      describe.each(invalidAuthHeaders)(
-        `when 'POST ${createTodoApiPath}' request is made with Authorization header set to $authorization`,
-        ({ authorization: authHeader }) => {
-          let response: Response;
+      test("should respond with '201 Created'", () => {
+        expect(response.statusCode).toBe(201);
+      });
 
-          beforeAll(async () => {
-            response = await request
-              .post(createTodoApiPath)
-              .send(createTodoInputStub())
-              .set("Authorization", authHeader);
-          });
+      test("should create todo for the authorized user", async () => {
+        const createdTodoId = responseData.todo.id;
+        const createdTodo = await Todo.findById(createdTodoId)
+          .populate("user", "name")
+          .exec();
+        expect((createdTodo!.user as TUser).id).toBe(user.id);
+      });
 
-          test("should respond with Unauthorized status code", () => {
-            expect(response.statusCode).toBe(401);
-          });
-
-          test("should return error response", () => {
-            expect(response.body).toMatchObject({
-              error: {
-                message: expect.any(String),
-              },
-            });
-          });
-        }
-      );
+      test("should return success response", () => {
+        expect(responseData).toMatchObject({
+          message: expect.stringMatching(/success/i),
+          todo: {
+            id: expect.any(String),
+            isDone: false,
+            ...input,
+          },
+        });
+      });
     });
   });
 });
