@@ -1,11 +1,14 @@
 import { Router } from "express";
 import { z } from "zod";
-import createHttpError from "http-errors";
 
-import { authenticate, todoExistsAndIsAccessible } from "../middlewares";
-import { createTodo, updateTodo } from "../services/todos";
+import {
+  authenticate,
+  idParamIsMongoId,
+  todoExistsAndIsAccessible,
+} from "../middlewares";
+import { createTodo, deleteTodo, updateTodo } from "../services/todos";
 
-import { isMongoId, validateSchema } from "../utils";
+import { validateSchema } from "../utils";
 import { debugApiServer } from "../constants";
 import { CreateTodoInput, UpdateTodoInput } from "../types/api/todo";
 
@@ -58,17 +61,7 @@ const updateTodoSchema = z
 
 todosRouter.put(
   "/:id",
-  async (req, _, next) => {
-    if (!isMongoId(req.params.id)) {
-      const e = createHttpError(
-        400,
-        "Invalid value passed for request path parameter 'id'"
-      );
-      next(e);
-      return;
-    }
-    next();
-  },
+  idParamIsMongoId,
   authenticate,
   todoExistsAndIsAccessible,
   async (req, _, next) => {
@@ -88,6 +81,27 @@ todosRouter.put(
       debugApiServer(`Updated todo: ${JSON.stringify(response.todo, null, 2)}`);
 
       res.status(200).json(response);
+    } catch (e) {
+      next(e);
+    }
+  }
+);
+
+todosRouter.delete(
+  "/:id",
+  idParamIsMongoId,
+  authenticate,
+  todoExistsAndIsAccessible,
+  async (req, res, next) => {
+    const todoId = req.params.id;
+
+    try {
+      const deleteResponse = await deleteTodo(todoId);
+      debugApiServer(
+        `Deleted todo: ${JSON.stringify(deleteResponse.todo, null, 2)}`
+      );
+
+      res.status(200).json(deleteResponse);
     } catch (e) {
       next(e);
     }
