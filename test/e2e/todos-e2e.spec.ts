@@ -23,11 +23,13 @@ import {
 import {
   invalidAuthHeaders,
   invalidCreateTodoInputs,
+  invalidMongoIdPathParams,
   invalidUpdateTodoData,
   registerUserInputs,
 } from "../data";
 import {
   createTodoApiPath,
+  deleteTodoApiPath,
   loginApiPath,
   updateTodoApiPath,
 } from "../constants";
@@ -37,10 +39,11 @@ const request = supertest(app);
 describe("Todo APIs e2e", () => {
   const createTodoRequestLine = `POST ${createTodoApiPath}`;
   const updateTodoRequestLine = `PUT ${updateTodoApiPath}`;
+  const deleteTodoRequestLine = `DELETE ${deleteTodoApiPath}`;
 
   let user: TUser;
-  const tokens: string[] = []
-  const seededTodoIds: string[] = []
+  const tokens: string[] = [];
+  const seededTodoIds: string[] = [];
 
   setupDatabase(true);
 
@@ -183,14 +186,19 @@ describe("Todo APIs e2e", () => {
       }
     );
 
-     describe.each(invalidUpdateTodoData)(
+    describe.each(invalidUpdateTodoData)(
       `when requested with invalid inputs`,
-      ({pathParams, updateInput}) => {
+      ({ pathParams, updateInput }) => {
         let response: Response;
 
         beforeAll(async () => {
           response = await request
-            .put(updateTodoApiPath.replace(":id", pathParams?.id ?? seededTodoIds[0]))
+            .put(
+              updateTodoApiPath.replace(
+                ":id",
+                pathParams?.id ?? seededTodoIds[0]
+              )
+            )
             .set("Authorization", `Bearer ${tokens[0]}`)
             .send(updateInput);
         });
@@ -288,6 +296,133 @@ describe("Todo APIs e2e", () => {
             ...input,
           },
         });
+      });
+    });
+  });
+
+  describe(`Delete Todo API '${deleteTodoRequestLine}'`, () => {
+    describe.each(invalidMongoIdPathParams)(
+      "when requested with invalid id, `:id` = $id",
+      (config) => {
+        let response: Response;
+
+        beforeAll(async () => {
+          response = await request
+            .delete(deleteTodoApiPath.replace(":id", config.id))
+            .set("Authorization", `Bearer ${tokens[0]}`);
+        });
+
+        test("should respond with '400 Bad Request'", () => {
+          expect(response.statusCode).toBe(400);
+        });
+
+        test("should return error response", () => {
+          expect(response.body).toMatchObject({
+            error: {
+              message: expect.stringMatching(/invalid/i),
+            },
+          });
+        });
+      }
+    );
+
+    describe.each(invalidAuthHeaders)(
+      `when requested with invalid header, authorization = $authorization`,
+      ({ authorization }) => {
+        let response: Response;
+
+        beforeAll(async () => {
+          response = await request
+            .delete(deleteTodoApiPath.replace(":id", seededTodoIds[0]))
+            .set("Authorization", authorization);
+        });
+
+        test("should respond with '401 Unauthorized'", () => {
+          expect(response.statusCode).toBe(401);
+        });
+
+        test("should return error response", () => {
+          expect(response.body).toMatchObject({
+            error: {
+              message: expect.any(String),
+            },
+          });
+        });
+      }
+    );
+
+    describe("when requested for a non existing resource", () => {
+      let response: Response;
+
+      beforeAll(async () => {
+        response = await request
+          .delete(deleteTodoApiPath.replace(":id", "aaaaaaaaaaaaaaaaaaaaaaaa"))
+          .set("Authorization", `Bearer ${tokens[0]}`);
+      });
+
+      test("should respond with '404 Not Found'", () => {
+        expect(response.statusCode).toBe(404);
+      });
+
+      test("should return error response", () => {
+        expect(response.body).toMatchObject({
+          error: {
+            message: expect.stringMatching(/not found/i),
+          },
+        });
+      });
+    });
+
+    describe("when requested for a forbidden resource", () => {
+      let response: Response;
+
+      beforeAll(async () => {
+        response = await request
+          .delete(deleteTodoApiPath.replace(":id", seededTodoIds[1]))
+          .set("Authorization", `Bearer ${tokens[0]}`);
+      });
+
+      test("should respond with '403 Forbidden'", () => {
+        expect(response.statusCode).toBe(403);
+      });
+
+      test("should return error response", () => {
+        expect(response.body).toMatchObject({
+          error: {
+            message: expect.stringMatching(/forbidden/i),
+          },
+        });
+      });
+    });
+
+    describe("when requested with valid id", () => {
+      let deleteTodoId: string;
+      let response: Response;
+
+      beforeAll(async () => {
+        deleteTodoId = seededTodoIds[0];
+
+        response = await request
+          .delete(deleteTodoApiPath.replace(":id", deleteTodoId))
+          .set("Authorization", `Bearer ${tokens[0]}`);
+      });
+
+      test("should respond with '200 OK'", () => {
+        expect(response.statusCode).toBe(200);
+      });
+
+      test("should return success response", () => {
+        expect(response.body).toMatchObject({
+          message: expect.stringMatching(/success/i),
+          todo: {
+            id: deleteTodoId,
+          },
+        });
+      });
+
+      test("resource must be deleted from the database", async () => {
+        const deletedTodo = await Todo.findById(deleteTodoId);
+        expect(deletedTodo).toBe(null);
       });
     });
   });
