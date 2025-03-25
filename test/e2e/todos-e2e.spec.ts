@@ -407,17 +407,8 @@ describe("Todo APIs e2e", () => {
           .set("Authorization", `Bearer ${tokens[0]}`);
       });
 
-      test("should respond with '200 OK'", () => {
-        expect(response.statusCode).toBe(200);
-      });
-
-      test("should return success response", () => {
-        expect(response.body).toMatchObject({
-          message: expect.stringMatching(/success/i),
-          todo: {
-            id: deleteTodoId,
-          },
-        });
+      test("should respond with '204 No Content'", () => {
+        expect(response.statusCode).toBe(204);
       });
 
       test("resource must be deleted from the database", async () => {

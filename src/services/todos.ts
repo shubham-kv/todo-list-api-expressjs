@@ -5,7 +5,6 @@ import { Todo } from "../models";
 import {
   CreateTodoInput,
   CreateTodoResponse,
-  DeleteTodoResponse,
   UpdateTodoInput,
 } from "../types/api/todo";
 
@@ -45,14 +44,7 @@ export async function updateTodo(
   };
 }
 
-export async function deleteTodo(todoId: string): Promise<DeleteTodoResponse> {
+export async function deleteTodo(todoId: string): Promise<void> {
   const todo = await Todo.findByIdAndDelete(todoId);
   assert(todo !== null, `Todo with id '${todoId}' was not found`);
-
-  const { id, title, description, isDone, createdAt, updatedAt } = todo;
-
-  return {
-    message: "Deleted Successfully",
-    todo: { id, title, description, isDone, createdAt, updatedAt },
-  };
 }
