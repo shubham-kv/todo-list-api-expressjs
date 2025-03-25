@@ -96,12 +96,10 @@ todosRouter.delete(
     const todoId = req.params.id;
 
     try {
-      const deleteResponse = await deleteTodo(todoId);
-      debugApiServer(
-        `Deleted todo: ${JSON.stringify(deleteResponse.todo, null, 2)}`
-      );
+      await deleteTodo(todoId);
+      debugApiServer(`Deleted todo with id '${todoId}'`);
 
-      res.status(200).json(deleteResponse);
+      res.status(204).end();
     } catch (e) {
       next(e);
     }

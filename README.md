@@ -187,7 +187,8 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2N2RkMjQwM
 ### 5. Delete Todo API
 
 API to delete existing todos of a user, requires authentication with the `Bearer
-{token}` authentication scheme.
+{token}` authentication scheme. Responds with a `204 No Content` status on
+success.
 
 **API Specification:**
 
@@ -205,22 +206,6 @@ API to delete existing todos of a user, requires authentication with the `Bearer
 DELETE /api/v1/todos/67dfd5b2df9ea55a38deae9c HTTP/1.1
 Host: localhost:4000
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2N2RkMjQwMzQyZTZkNzE4YzU1MjFjM2QiLCJpYXQiOjE3NDI4ODI2ODQsImV4cCI6MTc0Mjk2OTA4NH0.GDiX9aRLSpvnOair5uY6eixM0e4ExGtxK3gcVFJ6k8k
-```
-
-**Sample Success Response:**
-
-```json
-{
-  "message": "Deleted Successfully",
-  "todo": {
-    "id": "67dfd5b2df9ea55a38deae9c",
-    "title": "Write Update Todo API docs",
-    "description": "Write documentation for Update Todos API",
-    "isDone": true,
-    "createdAt": "2025-03-23T09:34:42.611Z",
-    "updatedAt": "2025-03-23T10:08:35.979Z"
-  }
-}
 ```
 
 ## Credits

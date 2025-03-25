@@ -19,5 +19,3 @@ export type UpdateTodoInput = Partial<
   Pick<TodoType, "title" | "description" | "isDone">
 >;
 export type UpdateTodoResponse = TodoResponse;
-
-export type DeleteTodoResponse = TodoResponse;
