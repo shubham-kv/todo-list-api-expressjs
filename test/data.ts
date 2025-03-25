@@ -44,14 +44,22 @@ export const invalidCreateTodoInputs: CreateTodoInput[] = [
   },
 ];
 
+type PathParams = { id: string };
+
+export const invalidMongoIdPathParams: PathParams[] = [
+  { id: "-1" },
+  { id: "1" },
+  { id: "12345678901234567890123" },
+  { id: "1234567890123456789012345" },
+];
+
 type InvalidUpdateTodoData = {
-  pathParams?: { id: string };
+  pathParams?: PathParams;
   updateInput?: UpdateTodoInput;
 };
 
 export const invalidUpdateTodoData: InvalidUpdateTodoData[] = [
-  { pathParams: { id: "12345" } },
-  { pathParams: { id: "15fdgfqyuq" } },
+  ...invalidMongoIdPathParams.map((v) => ({ pathParams: v })),
   { updateInput: { title: "" } },
   {
     updateInput: {

@@ -8,15 +8,16 @@ export type TodoType = {
   user: string | TUser;
 } & Entity;
 
-export type CreateTodoInput = Pick<TodoType, "title" | "description">;
-export type CreateTodoResponse = SuccessResponse<{
+type TodoResponse = SuccessResponse<{
   todo: Omit<TodoType, "user">;
 }>;
 
-export type UpdateTodoInput = Partial<Pick<
-  TodoType,
-  "title" | "description" | "isDone"
->>;
-export type UpdateTodoResponse = SuccessResponse<{
-  todo: Omit<TodoType, "user">;
-}>;
+export type CreateTodoInput = Pick<TodoType, "title" | "description">;
+export type CreateTodoResponse = TodoResponse;
+
+export type UpdateTodoInput = Partial<
+  Pick<TodoType, "title" | "description" | "isDone">
+>;
+export type UpdateTodoResponse = TodoResponse;
+
+export type DeleteTodoResponse = TodoResponse;
