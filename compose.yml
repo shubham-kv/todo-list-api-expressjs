@@ -1,0 +1,29 @@
+# If you need more help, visit the Docker Compose reference guide at
+# https://docs.docker.com/go/compose-spec-reference/
+
+services:
+  server:
+    build:
+      context: .
+    ports:
+      - 4000:4000
+    environment:
+      PORT: 4000
+      NODE_ENV: production
+      MONGO_URI: ${MONGO_URI}
+      LOGIN_TOKEN_SECRET: ${LOGIN_TOKEN_SECRET}
+      LOGIN_TOKEN_EXPIRY: ${LOGIN_TOKEN_EXPIRY}
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:8.0.5
+    restart: always
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    volumes:
+      - ./.data.local/mongodb:/data/db
