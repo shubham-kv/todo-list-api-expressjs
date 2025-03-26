@@ -1,6 +1,6 @@
 {
   "name": "todo-list-api",
-  "version": "0.0.0-dev",
+  "version": "1.0.0",
   "description": "Simple Todo List API with authentication in express.js.",
   "main": "dist/server.js",
   "scripts": {
