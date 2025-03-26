@@ -1,4 +1,4 @@
-import { Entity, SuccessResponse } from "./misc";
+import { Entity, PaginatedResponse, SuccessResponse } from "./misc";
 import { TUser } from "./users";
 
 export type TodoType = {
@@ -14,6 +14,13 @@ type TodoResponse = SuccessResponse<{
 
 export type CreateTodoInput = Pick<TodoType, "title" | "description">;
 export type CreateTodoResponse = TodoResponse;
+
+export type GetTodosQuery = {
+  page: number;
+  limit: number;
+};
+
+export type GetTodosResponse = PaginatedResponse<Omit<TodoType, "user">>;
 
 export type UpdateTodoInput = Partial<
   Pick<TodoType, "title" | "description" | "isDone">
