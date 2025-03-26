@@ -8,50 +8,50 @@ import { LoginResponse } from "../../src/types/api/auth";
 import {
   CreateTodoInput,
   CreateTodoResponse,
+  GetTodosQuery,
+  GetTodosResponse,
   UpdateTodoInput,
   UpdateTodoResponse,
 } from "../../src/types/api/todo";
 import { TUser } from "../../src/types/api/users";
 
 import { setupDatabase } from "../setup";
-import {
-  createTodoInputStub,
-  loginStub,
-  registerUserStub,
-  updateTodoInputStub,
-} from "../stubs";
+import { createTodoInputStub, loginStub, updateTodoInputStub } from "../stubs";
 import {
   invalidAuthHeaders,
   invalidCreateTodoInputs,
   invalidMongoIdPathParams,
+  invalidGetTodosQueryParams,
   invalidUpdateTodoData,
   registerUserInputs,
 } from "../data";
 import {
   createTodoApiPath,
   deleteTodoApiPath,
+  getTodosApiPath,
   loginApiPath,
   updateTodoApiPath,
 } from "../constants";
+import { Types } from "mongoose";
 
 const request = supertest(app);
 
 describe("Todo APIs e2e", () => {
   const createTodoRequestLine = `POST ${createTodoApiPath}`;
+  const getTodosRequestLine = `GET ${getTodosApiPath}`;
   const updateTodoRequestLine = `PUT ${updateTodoApiPath}`;
   const deleteTodoRequestLine = `DELETE ${deleteTodoApiPath}`;
 
-  let user: TUser;
+  const users: TUser[] = [];
   const tokens: string[] = [];
   const seededTodoIds: string[] = [];
 
   setupDatabase(true);
 
   beforeAll(async () => {
-    const email = registerUserStub().email;
-    const registeredUser = await User.findOne({ email }).exec();
-    assert(registeredUser !== null, "No seeded registered user found");
-    user = registeredUser;
+    const allUsers = await User.find().exec();
+    assert(allUsers.length > 0, "No seeded users found");
+    users.push(...allUsers);
 
     for (let i = 0; i < registerUserInputs.length; i++) {
       const response = await request.post(loginApiPath).send(loginStub(i));
@@ -143,7 +143,7 @@ describe("Todo APIs e2e", () => {
         const createdTodo = await Todo.findById(createdTodoId)
           .populate("user", "name")
           .exec();
-        expect((createdTodo!.user as TUser).id).toBe(user.id);
+        expect((createdTodo!.user as TUser).id).toBe(users[0].id);
       });
 
       test("should return success response", () => {
@@ -155,6 +155,102 @@ describe("Todo APIs e2e", () => {
             ...input,
           },
         });
+      });
+    });
+  });
+
+  describe(`Get Todos API '${getTodosRequestLine}'`, () => {
+    describe.each(invalidAuthHeaders)(
+      `when requested with invalid Authorization header set to $authorization`,
+      ({ authorization: authHeader }) => {
+        let response: Response;
+
+        beforeAll(async () => {
+          response = await request
+            .get(getTodosApiPath)
+            .set("Authorization", authHeader);
+        });
+
+        test("should respond with '401 Unauthorized'", () => {
+          expect(response.statusCode).toBe(401);
+        });
+      }
+    );
+
+    describe.each(invalidGetTodosQueryParams)(
+      "when requested with invalid query params, page=$page, limit=$limit",
+      (queryParams) => {
+        let response: Response;
+
+        beforeAll(async () => {
+          response = await request
+            .get(getTodosApiPath)
+            .query(queryParams)
+            .set("Authorization", `Bearer ${tokens[0]}`);
+        });
+
+        test("should fail with '400 Bad Request'", ({ expect }) => {
+          expect(response.statusCode).toBe(400);
+        });
+
+        test("should return error response", ({ expect }) => {
+          expect(response.body).toMatchObject({
+            error: { message: expect.any(String) },
+          });
+        });
+      }
+    );
+
+    describe("when requested with valid query params", () => {
+      let query: GetTodosQuery;
+      let response: Response;
+      let responseBody: GetTodosResponse;
+
+      beforeAll(async () => {
+        query = { page: 1, limit: 10 };
+
+        response = await request
+          .get(getTodosApiPath)
+          .query(query)
+          .set("Authorization", `Bearer ${tokens[0]}`);
+
+        responseBody = response.body;
+      });
+
+      test("should respond with '200 OK'", ({ expect }) => {
+        expect(response.statusCode).toBe(200);
+      });
+
+      test("should return correct response", ({ expect }) => {
+        expect(responseBody).toMatchObject({
+          data: expect.arrayContaining([
+            expect.objectContaining({
+              id: expect.any(String),
+              title: expect.any(String),
+              description: expect.any(String),
+              isDone: expect.any(Boolean),
+              createdAt: expect.any(String),
+              updatedAt: expect.any(String),
+            }),
+          ]),
+          total: expect.any(Number),
+          ...query,
+        });
+      });
+
+      test("should return the todos of only the authorized user", async ({
+        expect,
+      }) => {
+        const userTodos = await Todo.find({
+          user: new Types.ObjectId(users[0].id),
+        });
+        const userTodoIds = userTodos.map((todo) => todo.id);
+
+        const invalidTodos = responseBody.data.filter(
+          (t) => !userTodoIds.includes(t.id)
+        );
+
+        expect(invalidTodos.length).toBe(0);
       });
     });
   });

@@ -44,6 +44,16 @@ export const invalidCreateTodoInputs: CreateTodoInput[] = [
   },
 ];
 
+export const invalidGetTodosQueryParams = [
+  { page: "Invalid" },
+  { page: "-1" },
+  { limit: "Invalid" },
+  { limit: "-1" },
+  { limit: "51" },
+  { page: "Invalid", limit: "Invalid" },
+  { page: "-1", limit: "-1" },
+];
+
 type PathParams = { id: string };
 
 export const invalidMongoIdPathParams: PathParams[] = [
