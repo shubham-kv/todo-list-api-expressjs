@@ -5,15 +5,16 @@ Simple Todo List API with jwt authentication in express.js.
 
 ## List of APIs
 
-- [Register User API](#1-register-user-api)
-- [Login API](#2-login-api)
-- [Create Todo API](#3-create-todo-api)
-- [Update Todo API](#4-update-todo-api)
-- [Delete Todo API](#5-delete-todo-api)
+- [Register User API](#register-user-api)
+- [Login API](#login-api)
+- [Create Todo API](#create-todo-api)
+- [Get Todos API](#get-todos-api)
+- [Update Todo API](#update-todo-api)
+- [Delete Todo API](#delete-todo-api)
 
 ## Specification
 
-### 1. Register User API
+### Register User API
 
 API to allow new users to register to the application.
 
@@ -56,7 +57,7 @@ Content-Type: application/json
 }
 ```
 
-### 2. Login API
+### Login API
 
 API to allow users to login to the application by using json web token (JWT) for
 authorization.
@@ -93,7 +94,7 @@ Content-Type: application/json
 }
 ```
 
-### 3. Create Todo API
+### Create Todo API
 
 API to create & add todos for a user, requires authentication with the `Bearer
 {token}` authentication scheme.
@@ -138,7 +139,59 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2N2RkMjQwM
 }
 ```
 
-### 4. Update Todo API
+### Get Todos API
+
+API to get todos of a user, requires authentication with the `Bearer
+{token}` authentication scheme.
+
+**API Specification:**
+
+|   |   |
+| - | - |
+| API Version           | `v1`                            |
+| Request Method        | `GET`                           |
+| Request Path          | `/api/v1/todos/`                |
+| Request Query params  | `?page={number}&limit={number}` |
+| Response Content type | `json`                          |
+| Response Status Code  | `200`                           |
+
+**Sample Request:**
+
+```http
+GET /api/v1/todos?page=1&limit=2 HTTP/1.1
+Host: localhost:4000
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2N2UzOTRmZWI2OWM3YTQ2ZWJhYzYwZjEiLCJpYXQiOjE3NDI5NzI0ODIsImV4cCI6MTc0MzA1ODg4Mn0.abU9eT9cq2keBv64GiYzIkzrGoJETG7Ce04OWDZNXzE
+```
+
+**Sample Response:**
+
+```json
+{
+  "data": [
+    {
+      "id": "67e395fabcce7c6b7b071d2d",
+      "title": "Work on Get Todos API",
+      "description": "Iterate on Get Todos API",
+      "isDone": false,
+      "createdAt": "2025-03-26T05:51:54.257Z",
+      "updatedAt": "2025-03-26T05:51:54.257Z"
+    },
+    {
+      "id": "67e3960fbcce7c6b7b071d30",
+      "title": "Test Get Todos API",
+      "description": "Add e2e Tests for Get Todos API",
+      "isDone": false,
+      "createdAt": "2025-03-26T05:52:15.297Z",
+      "updatedAt": "2025-03-26T05:52:15.297Z"
+    }
+  ],
+  "page": 1,
+  "limit": 2,
+  "total": 4
+}
+```
+
+### Update Todo API
 
 API to update existing todos of a user, requires authentication with the `Bearer
 {token}` authentication scheme.
@@ -184,7 +237,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2N2RkMjQwM
 }
 ```
 
-### 5. Delete Todo API
+### Delete Todo API
 
 API to delete existing todos of a user, requires authentication with the `Bearer
 {token}` authentication scheme. Responds with a `204 No Content` status on

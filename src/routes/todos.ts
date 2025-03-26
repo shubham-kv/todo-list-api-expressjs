@@ -6,11 +6,20 @@ import {
   idParamIsMongoId,
   todoExistsAndIsAccessible,
 } from "../middlewares";
-import { createTodo, deleteTodo, updateTodo } from "../services/todos";
+import {
+  createTodo,
+  deleteTodo,
+  getTodos,
+  updateTodo,
+} from "../services/todos";
 
 import { validateSchema } from "../utils";
 import { debugApiServer } from "../constants";
-import { CreateTodoInput, UpdateTodoInput } from "../types/api/todo";
+import {
+  CreateTodoInput,
+  GetTodosQuery,
+  UpdateTodoInput,
+} from "../types/api/todo";
 
 const todosRouter = Router();
 
@@ -45,6 +54,42 @@ todosRouter.post(
       debugApiServer(`Created todo: ${JSON.stringify(response.todo, null, 2)}`);
 
       res.status(201).json(response);
+    } catch (e) {
+      next(e);
+    }
+  }
+);
+
+const getTodosQuerySchema = z
+  .object({
+    page: z
+      .preprocess((val) => Number(val), z.number().min(1))
+      .default(1)
+      .optional(),
+    limit: z
+      .preprocess((val) => Number(val), z.number().min(1).max(50))
+      .default(10)
+      .optional(),
+  })
+  .strict();
+
+todosRouter.get(
+  "/",
+  authenticate,
+  async (req, _, next) => {
+    try {
+      req.query = await validateSchema(getTodosQuerySchema, req.query);
+    } catch (e) {
+      next(e);
+    }
+    next();
+  },
+  async (req, res, next) => {
+    const query = req.query as unknown as GetTodosQuery
+
+    try {
+      const response = await getTodos(query, req.user!.id);
+      res.status(200).json(response);
     } catch (e) {
       next(e);
     }
