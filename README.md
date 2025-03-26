@@ -1,9 +1,70 @@
 
-# todo-list-api
+Dockerized Todo List API with JWT authentication in express.js.
 
-Simple Todo List API with jwt authentication in express.js.
+## Requirements
 
-## List of APIs
+Node `v20.15.1` & npm `v10.9.0` or Docker Desktop Version `4.39.0` for running
+in docker containers.
+
+## Installation
+
+Clone this repository:
+
+```bash
+git clone https://github.com/shubham-kv/todo-list-api-expressjs.git
+```
+
+Navigate to the root of the project directory & install the dependencies:
+
+```bash
+npm install
+```
+
+## Running the application
+
+### Running on local machine
+
+Copy the contents of `.env.template` file to a `.env` file and fill in your
+values.
+
+Start the server in development mode by running the `dev` script:
+
+```bash
+npm run dev
+```
+
+Or make a production build with the `build` script & start the server with
+`start` command:
+
+```bash
+npm run build
+npm start
+```
+
+### Running in docker container
+
+Use `.env.docker.template` file as a template for your environment variables,
+copy this template to your `.env` file and populate with your own values.
+
+To run in development mode (which uses a bind mount to restart the server on
+every file change) build the application image with `docker:dev:build` & start
+the development server with `docker:dev:start`:
+
+```bash
+npm run docker:dev:build
+npm run docker:dev:start
+```
+
+Use `docker:build` & `docker:start` to run the application in production mode:
+
+```bash
+npm run docker:build
+npm run docker:start
+```
+
+## API Specification
+
+Quick List of APIs:
 
 - [Register User API](#register-user-api)
 - [Login API](#login-api)
@@ -11,8 +72,6 @@ Simple Todo List API with jwt authentication in express.js.
 - [Get Todos API](#get-todos-api)
 - [Update Todo API](#update-todo-api)
 - [Delete Todo API](#delete-todo-api)
-
-## Specification
 
 ### Register User API
 
